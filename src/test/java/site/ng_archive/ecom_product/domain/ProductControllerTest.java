@@ -9,6 +9,8 @@ import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static io.restassured.module.webtestclient.RestAssuredWebTestClient.given;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 class ProductControllerTest extends AcceptedTest {
 
@@ -36,6 +38,10 @@ class ProductControllerTest extends AcceptedTest {
             .get("/products")
             .then()
             .status(HttpStatus.OK)
+            .body("size()", greaterThanOrEqualTo(0))
+            .body("[0].id", notNullValue())
+            .body("[0].name", notNullValue())
+            .body("[0].price", greaterThanOrEqualTo(0))
             .log().all();
     }
 
