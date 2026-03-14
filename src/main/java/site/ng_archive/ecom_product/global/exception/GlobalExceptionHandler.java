@@ -1,0 +1,37 @@
+package site.ng_archive.ecom_product.global.exception;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import reactor.core.publisher.Mono;
+import site.ng_archive.ecom_product.global.error.ErrorMessageUtils;
+import site.ng_archive.ecom_product.global.error.ErrorResponse;
+
+@Slf4j
+@RestControllerAdvice
+@RequiredArgsConstructor
+public class GlobalExceptionHandler {
+
+    private final ErrorMessageUtils errorMessageUtils;
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public Mono<ResponseEntity<ErrorResponse>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return Mono.just(ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(errorMessageUtils.getErrorResult(ex)));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Mono<ResponseEntity<ErrorResponse>> handleGeneralException(Exception ex) {
+        log.error("handleGeneralException: ", ex);
+
+        String errorCode = "error.internal.server";
+        return Mono.just(ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(errorMessageUtils.getErrorResult(errorCode)));
+    }
+
+}

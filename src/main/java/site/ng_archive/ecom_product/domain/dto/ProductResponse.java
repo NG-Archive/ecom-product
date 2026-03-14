@@ -8,7 +8,7 @@ public record ProductResponse(
     Long price
 ) {
 
-    public static ProductResponse fromEntity(Product product) {
+    public static ProductResponse from(Product product) {
         return new ProductResponse(product.id(), product.name(), product.price());
     }
 

@@ -4,9 +4,11 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 
 @RestController
@@ -21,6 +23,11 @@ public class ProductController {
             @RequestParam(defaultValue = "0") @Min(0) long offset,
             @RequestParam(defaultValue = "10") @Min(1) int size) {
         return productService.readAllProducts(offset, size);
+    }
+
+    @GetMapping("/product/{id}")
+    public Mono<ProductResponse> readProduct(@PathVariable Long id) {
+        return productService.readProduct(id);
     }
 
 }
