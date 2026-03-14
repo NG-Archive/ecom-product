@@ -24,12 +24,12 @@ public class RestDocsConfig {
     public OperationRequestPreprocessor getRequestPreprocessor() {
         return switch (profile) {
             case "local" -> Preprocessors.preprocessRequest(
-                Preprocessors.prettyPrint(),
-                modifyUris().scheme("http").host("localhost")
+                    Preprocessors.prettyPrint(),
+                    modifyUris().scheme("http").host("localhost")
             );
             default -> Preprocessors.preprocessRequest(
-                Preprocessors.prettyPrint(),
-                modifyUris().scheme("https").host("prod-host").removePort()
+                    Preprocessors.prettyPrint(),
+                    modifyUris().scheme("https").host("prod-host").removePort()
             );
         };
     }
@@ -52,4 +52,5 @@ public class RestDocsConfig {
             final String value){
         return new Attribute(key,value);
     }
+
 }
