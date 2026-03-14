@@ -2,6 +2,7 @@ package site.ng_archive.ecom_product.domain;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +27,9 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public Mono<ProductResponse> readProduct(@PathVariable Long id) {
-        return productService.readProduct(id);
+    public Mono<ResponseEntity<ProductResponse>> readProduct(@PathVariable Long id) {
+        return productService.readProduct(id)
+            .map(ResponseEntity::ok);
     }
 
 }
