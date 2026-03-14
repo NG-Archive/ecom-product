@@ -12,7 +12,7 @@ public interface ProductRepository extends ReactiveCrudRepository<Product, Long>
             JOIN (
                 SELECT id FROM product ORDER BY id DESC LIMIT :size OFFSET :offset) temp
             ON p.id = temp.id
-            ORDER BY p.id
+            ORDER BY p.id DESC
             """)
     Flux<Product> findAllBy(long offset, int size);
 
