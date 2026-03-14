@@ -16,7 +16,7 @@ java {
 }
 
 openapi3 {
-	title = 'Member Service API'
+	title = 'Product Service API'
 	description = 'ecom 서비스의 상품 API 문서'
 	version = '1.0.0'
 	format = 'yaml'
