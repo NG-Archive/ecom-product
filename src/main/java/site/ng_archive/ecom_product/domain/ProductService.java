@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import site.ng_archive.ecom_product.domain.dto.ProductCommand;
+import site.ng_archive.ecom_product.domain.dto.CreateProductCommand;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 import site.ng_archive.ecom_product.domain.dto.UpdateProductCommand;
 import site.ng_archive.ecom_product.global.exception.EntityNotFoundException;
@@ -26,7 +26,7 @@ public class ProductService {
             .switchIfEmpty(Mono.defer(() -> Mono.error(new EntityNotFoundException("product.notfound"))));
     }
 
-    public Mono<ProductResponse> createProduct(ProductCommand command) {
+    public Mono<ProductResponse> createProduct(CreateProductCommand command) {
         return productRepository.save(command.toEntity())
             .map(ProductResponse::from);
     }

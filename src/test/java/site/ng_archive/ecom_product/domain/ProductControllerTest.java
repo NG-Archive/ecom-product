@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import site.ng_archive.ecom_product.config.AcceptedTest;
-import site.ng_archive.ecom_product.domain.dto.ProductCommand;
-import site.ng_archive.ecom_product.domain.dto.ProductRequest;
+import site.ng_archive.ecom_product.domain.dto.CreateProductCommand;
+import site.ng_archive.ecom_product.domain.dto.CreateProductRequest;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 import site.ng_archive.ecom_product.domain.dto.UpdateProductRequest;
 import site.ng_archive.ecom_product.global.error.ErrorResponse;
@@ -120,7 +120,7 @@ class ProductControllerTest extends AcceptedTest {
 
     @Test
     void 상품등록() {
-        ProductRequest request = new ProductRequest("테스트 상품", 1000L);
+        CreateProductRequest request = new CreateProductRequest("테스트 상품", 1000L);
 
         ProductResponse response = given()
             .contentType(ContentType.JSON)
@@ -131,8 +131,8 @@ class ProductControllerTest extends AcceptedTest {
                     .summary("상품 등록")
                     .description("상품 정보를 입력해 상품을 등록합니다.")
                     .requestFields(
-                        field(ProductRequest.class, "name", "상품 이름"),
-                        field(ProductRequest.class, "price", "상품 가격")
+                        field(CreateProductRequest.class, "name", "상품 이름"),
+                        field(CreateProductRequest.class, "price", "상품 가격")
                     )
                     .requestSchema(Schema.schema("ProductCreateRequest"))
                     .responseFields(
@@ -233,7 +233,7 @@ class ProductControllerTest extends AcceptedTest {
     }
 
     private Long createMember(String name, Long price) {
-        ProductCommand command = new ProductCommand(name, price);
+        CreateProductCommand command = new CreateProductCommand(name, price);
         return productService.createProduct(command).block().id();
     }
 

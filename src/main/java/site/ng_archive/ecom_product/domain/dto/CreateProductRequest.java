@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ProductRequest(
+public record CreateProductRequest(
     @NotBlank(message = "product.name.blank")
     String name,
 
@@ -13,8 +13,8 @@ public record ProductRequest(
     Long price
 ) {
 
-    public ProductCommand toCommand() {
-        return new ProductCommand(name, price);
+    public CreateProductCommand toCommand() {
+        return new CreateProductCommand(name, price);
     }
 
 }
