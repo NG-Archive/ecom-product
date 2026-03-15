@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_product.global.error.ErrorMessageUtils;
 import site.ng_archive.ecom_product.global.error.ErrorResponse;
 
+import java.util.List;
+
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -29,7 +31,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WebExchangeBindException.class)
     public Mono<ResponseEntity<ErrorResponse>> handleWebExchangeBindException(WebExchangeBindException ex) {
-        FieldError error = ex.getBindingResult().getFieldErrors().getFirst();
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+
+        if (fieldErrors.isEmpty()) {
+            return Mono.just(ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorMessageUtils.getErrorResult("error.input.unknown")));
+        }
+
+        FieldError error = fieldErrors.getFirst();
 
         return Mono.just(ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
