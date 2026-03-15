@@ -1,15 +1,14 @@
 package site.ng_archive.ecom_product.domain;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import site.ng_archive.ecom_product.domain.dto.ProductRequest;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 
 @RestController
@@ -29,6 +28,12 @@ public class ProductController {
     @GetMapping("/product/{id}")
     public Mono<ResponseEntity<ProductResponse>> readProduct(@PathVariable Long id) {
         return productService.readProduct(id)
+            .map(ResponseEntity::ok);
+    }
+
+    @PostMapping("/product")
+    public Mono<ResponseEntity<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest request) {
+        return productService.createProduct(request.toCommand())
             .map(ResponseEntity::ok);
     }
 
