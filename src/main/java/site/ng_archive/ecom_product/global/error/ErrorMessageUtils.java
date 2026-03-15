@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 @Component
@@ -31,6 +32,20 @@ public class ErrorMessageUtils {
         }
     }
 
+    private String getErrorMessage(String errorCode, Object[] args) {
+        Object[] reversed = null;
+
+        if (args != null && args.length > 1) {
+            Object[] copied = Arrays.copyOfRange(args, 1, args.length);
+            reversed = Arrays.asList(copied).reversed().toArray();
+        }
+        try {
+            return messageSource.getMessage(errorCode, reversed, Locale.KOREA);
+        } catch (Exception ex) {
+            return messageSource.getMessage(EXCEPTION_ERROR_CODE, null, Locale.KOREA);
+        }
+    }
+
     public ErrorResponse getErrorResult(Exception e) {
         String code = getErrorCode(e);
         String message = getErrorMessage(code);
@@ -39,6 +54,10 @@ public class ErrorMessageUtils {
 
     public ErrorResponse getErrorResult(String errorCode) {
         return new ErrorResponse(errorCode, getErrorMessage(errorCode));
+    }
+
+    public ErrorResponse getErrorResult(String errorCode, Object[] args) {
+        return new ErrorResponse(errorCode, getErrorMessage(errorCode, args));
     }
 
 }
