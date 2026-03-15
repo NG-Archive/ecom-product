@@ -139,7 +139,7 @@ class ProductControllerTest extends AcceptedTest {
                         field(ProductResponse.class, "name", "상품 이름"),
                         field(ProductResponse.class, "price", "상품 가격")
                     )
-                    .requestSchema(Schema.schema("ProductCreatedResponse"))
+                    .responseSchema(Schema.schema("ProductCreatedResponse"))
             ))
             .post("/product")
             .then()
