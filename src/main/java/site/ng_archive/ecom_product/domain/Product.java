@@ -10,4 +10,9 @@ public record Product(
         String name,
         Long price
 ) {
+
+    public Product update(String name, Long price) {
+        return new Product(this.id, name, price);
+    }
+
 }
