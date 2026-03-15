@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_product.domain.dto.ProductRequest;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
+import site.ng_archive.ecom_product.domain.dto.UpdateProductRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +35,14 @@ public class ProductController {
     @PostMapping("/product")
     public Mono<ResponseEntity<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest request) {
         return productService.createProduct(request.toCommand())
+            .map(ResponseEntity::ok);
+    }
+
+    @PutMapping("/product/{id}")
+    public Mono<ResponseEntity<ProductResponse>> updateProduct(
+        @PathVariable Long id,
+        @Valid @RequestBody UpdateProductRequest request) {
+        return productService.updateProduct(request.toCommand(id))
             .map(ResponseEntity::ok);
     }
 

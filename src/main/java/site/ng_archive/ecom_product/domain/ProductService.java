@@ -6,6 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_product.domain.dto.ProductCommand;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
+import site.ng_archive.ecom_product.domain.dto.UpdateProductCommand;
 import site.ng_archive.ecom_product.global.exception.EntityNotFoundException;
 
 @Service
@@ -30,4 +31,13 @@ public class ProductService {
             .map(ProductResponse::from);
     }
 
+    public Mono<ProductResponse> updateProduct(UpdateProductCommand command) {
+        return productRepository.findById(command.id())
+            .switchIfEmpty(Mono.defer(() -> Mono.error(new EntityNotFoundException("product.notfound"))))
+            .flatMap(product -> {
+                Product updatedProduct = product.update(command.name(), command.price());
+                return productRepository.save(updatedProduct);
+            })
+            .map(ProductResponse::from);
+    }
 }
