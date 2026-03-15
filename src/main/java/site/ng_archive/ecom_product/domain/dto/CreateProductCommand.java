@@ -2,7 +2,7 @@ package site.ng_archive.ecom_product.domain.dto;
 
 import site.ng_archive.ecom_product.domain.Product;
 
-public record ProductCommand(
+public record CreateProductCommand(
     String name,
     Long price
 ) {

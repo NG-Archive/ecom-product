@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import site.ng_archive.ecom_product.domain.dto.ProductRequest;
+import site.ng_archive.ecom_product.domain.dto.CreateProductRequest;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 import site.ng_archive.ecom_product.domain.dto.UpdateProductRequest;
 
@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @PostMapping("/product")
-    public Mono<ResponseEntity<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest request) {
+    public Mono<ResponseEntity<ProductResponse>> createProduct(@Valid @RequestBody CreateProductRequest request) {
         return productService.createProduct(request.toCommand())
             .map(ResponseEntity::ok);
     }
