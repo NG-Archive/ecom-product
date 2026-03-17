@@ -61,7 +61,7 @@ class ProductControllerTest extends AcceptedTest {
 
     @Test
     void 상품단건조회() {
-        Long id = createMember("테스트 상품", 1000L);
+        Long id = createProduct("테스트 상품", 1000L);
 
         ProductResponse response = given()
             .pathParam("id", id)
@@ -144,7 +144,7 @@ class ProductControllerTest extends AcceptedTest {
             ))
             .post("/product")
             .then()
-            .status(HttpStatus.OK)
+            .status(HttpStatus.CREATED)
             .contentType(ContentType.JSON)
             .log().all()
             .extract().body().as(ProductResponse.class);
@@ -155,7 +155,7 @@ class ProductControllerTest extends AcceptedTest {
 
     @Test
     void 상품수정() {
-        Long id = createMember("테스트 상품", 1000L);
+        Long id = createProduct("테스트 상품", 1000L);
         UpdateProductRequest request = new UpdateProductRequest("테스트 상품 수정", 2000L);
 
         ProductResponse response = given()
@@ -232,7 +232,7 @@ class ProductControllerTest extends AcceptedTest {
         Assertions.assertThat(response.message()).isEqualTo("상품이 존재하지 않습니다.");
     }
 
-    private Long createMember(String name, Long price) {
+    private Long createProduct(String name, Long price) {
         CreateProductCommand command = new CreateProductCommand(name, price);
         return productService.createProduct(command).block().id();
     }

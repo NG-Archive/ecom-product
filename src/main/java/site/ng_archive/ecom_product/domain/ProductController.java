@@ -3,6 +3,7 @@ package site.ng_archive.ecom_product.domain;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class ProductController {
     @PostMapping("/product")
     public Mono<ResponseEntity<ProductResponse>> createProduct(@Valid @RequestBody CreateProductRequest request) {
         return productService.createProduct(request.toCommand())
-            .map(ResponseEntity::ok);
+            .map(product -> ResponseEntity.status(HttpStatus.CREATED).body(product));
     }
 
     @PutMapping("/product/{id}")
