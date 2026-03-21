@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -28,23 +27,21 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public Mono<ResponseEntity<ProductResponse>> readProduct(@PathVariable Long id) {
-        return productService.readProduct(id)
-            .map(ResponseEntity::ok);
+    public Mono<ProductResponse> readProduct(@PathVariable Long id) {
+        return productService.readProduct(id);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/product")
-    public Mono<ResponseEntity<ProductResponse>> createProduct(@Valid @RequestBody CreateProductRequest request) {
-        return productService.createProduct(request.toCommand())
-            .map(product -> ResponseEntity.status(HttpStatus.CREATED).body(product));
+    public Mono<ProductResponse> createProduct(@Valid @RequestBody CreateProductRequest request) {
+        return productService.createProduct(request.toCommand());
     }
 
     @PutMapping("/product/{id}")
-    public Mono<ResponseEntity<ProductResponse>> updateProduct(
+    public Mono<ProductResponse> updateProduct(
         @PathVariable Long id,
         @Valid @RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(request.toCommand(id))
-            .map(ResponseEntity::ok);
+        return productService.updateProduct(request.toCommand(id));
     }
 
 }

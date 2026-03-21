@@ -7,12 +7,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import site.ng_archive.ecom_common.error.ErrorResponse;
 import site.ng_archive.ecom_product.config.AcceptedTest;
 import site.ng_archive.ecom_product.domain.dto.CreateProductCommand;
 import site.ng_archive.ecom_product.domain.dto.CreateProductRequest;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 import site.ng_archive.ecom_product.domain.dto.UpdateProductRequest;
-import site.ng_archive.ecom_product.global.error.ErrorResponse;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static io.restassured.module.webtestclient.RestAssuredWebTestClient.given;
