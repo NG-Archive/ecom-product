@@ -29,6 +29,7 @@ class ProductControllerTest extends AcceptedTest {
 
     @Test
     void 상품목록조회() {
+        createProduct("테스트 상품", 1000L);
         given()
             .queryParam("offset", 0)
             .queryParam("size", 10)
