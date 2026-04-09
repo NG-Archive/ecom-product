@@ -89,6 +89,8 @@ class ProductControllerTest extends AcceptedTest {
             .extract().body().as(ProductResponse.class);
 
         Assertions.assertThat(createProduct.id()).isEqualTo(response.id());
+        Assertions.assertThat(createProduct.name()).isEqualTo(response.name());
+        Assertions.assertThat(createProduct.price()).isEqualTo(response.price());
     }
 
     @Test
