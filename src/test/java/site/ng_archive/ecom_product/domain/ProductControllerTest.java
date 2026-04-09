@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import site.ng_archive.ecom_common.error.ErrorResponse;
 import site.ng_archive.ecom_product.config.AcceptedTest;
-import site.ng_archive.ecom_product.domain.dto.CreateProductCommand;
 import site.ng_archive.ecom_product.domain.dto.CreateProductRequest;
 import site.ng_archive.ecom_product.domain.dto.ProductResponse;
 import site.ng_archive.ecom_product.domain.dto.UpdateProductRequest;
@@ -22,14 +21,15 @@ import static org.hamcrest.Matchers.notNullValue;
 class ProductControllerTest extends AcceptedTest {
 
     @Autowired
-    private ProductService productService;
-
-    @Autowired
     private ProductRepository productRepository;
 
+    private static final String TEST_PRODUCT_NAME = "테스트 상품";
+    private static final Long TEST_PRODUCT_PRICE = 1000L;
+
     @Test
-    void 상품목록조회() {
-        createProduct("테스트 상품", 1000L);
+    void 상품목록조회_성공() {
+        createProduct(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
+
         given()
             .queryParam("offset", 0)
             .queryParam("size", 10)
@@ -61,11 +61,11 @@ class ProductControllerTest extends AcceptedTest {
     }
 
     @Test
-    void 상품단건조회() {
-        Long id = createProduct("테스트 상품", 1000L);
+    void 상품단건조회_성공() {
+        Product createProduct = createProduct(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
 
         ProductResponse response = given()
-            .pathParam("id", id)
+            .pathParam("id", createProduct.id())
             .consumeWith(document(
                 info()
                     .tag("Product")
@@ -88,11 +88,11 @@ class ProductControllerTest extends AcceptedTest {
             .log().all()
             .extract().body().as(ProductResponse.class);
 
-        Assertions.assertThat(id).isEqualTo(response.id());
+        Assertions.assertThat(createProduct.id()).isEqualTo(response.id());
     }
 
     @Test
-    void 상품단건조회_미존재상품오류() {
+    void 상품단건조회_실패_미존재상품오류() {
         ErrorResponse response = given()
             .pathParam("id", -1L)
             .consumeWith(document(
@@ -120,8 +120,8 @@ class ProductControllerTest extends AcceptedTest {
     }
 
     @Test
-    void 상품등록() {
-        CreateProductRequest request = new CreateProductRequest("테스트 상품", 1000L);
+    void 상품등록_성공() {
+        CreateProductRequest request = new CreateProductRequest(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
 
         ProductResponse response = given()
             .contentType(ContentType.JSON)
@@ -155,13 +155,13 @@ class ProductControllerTest extends AcceptedTest {
     }
 
     @Test
-    void 상품수정() {
-        Long id = createProduct("테스트 상품", 1000L);
+    void 상품수정_성공() {
+        Product createdProduct = createProduct(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
         UpdateProductRequest request = new UpdateProductRequest("테스트 상품 수정", 2000L);
 
         ProductResponse response = given()
             .contentType(ContentType.JSON)
-            .pathParam("id", id)
+            .pathParam("id", createdProduct.id())
             .body(request)
             .consumeWith(document(
                 info()
@@ -190,13 +190,13 @@ class ProductControllerTest extends AcceptedTest {
             .log().all()
             .extract().body().as(ProductResponse.class);
 
-        Assertions.assertThat(response.id()).isEqualTo(id);
+        Assertions.assertThat(response.id()).isEqualTo(createdProduct.id());
         Assertions.assertThat(response.name()).isEqualTo(request.name());
         Assertions.assertThat(response.price()).isEqualTo(request.price());
     }
 
     @Test
-    void 상품수정_미존재상품오류() {
+    void 상품수정_실패_미존재상품오류() {
         UpdateProductRequest request = new UpdateProductRequest("테스트 상품 수정", 2000L);
 
         ErrorResponse response = given()
@@ -233,9 +233,9 @@ class ProductControllerTest extends AcceptedTest {
         Assertions.assertThat(response.message()).isEqualTo("상품이 존재하지 않습니다.");
     }
 
-    private Long createProduct(String name, Long price) {
-        CreateProductCommand command = new CreateProductCommand(name, price);
-        return productService.createProduct(command).block().id();
+    private Product createProduct(String name, Long price) {
+        Product product = new Product(null, name, price);
+        return productRepository.save(product).block();
     }
 
 }
