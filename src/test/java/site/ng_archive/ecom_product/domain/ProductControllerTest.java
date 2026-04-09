@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.Schema;
 import com.epages.restdocs.apispec.SimpleType;
 import io.restassured.http.ContentType;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,11 @@ class ProductControllerTest extends AcceptedTest {
 
     private static final String TEST_PRODUCT_NAME = "테스트 상품";
     private static final Long TEST_PRODUCT_PRICE = 1000L;
+
+    @BeforeEach
+    void setUp() {
+        productRepository.deleteAll().block();
+    }
 
     @Test
     void 상품목록조회_성공() {
