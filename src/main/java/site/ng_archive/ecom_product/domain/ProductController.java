@@ -51,4 +51,9 @@ public class ProductController {
         return productService.updateProduct(request.toCommand(id, user.id()));
     }
 
+    @GetMapping("/product/{id}/exists")
+    public Mono<ProductExistsResponse> existsProduct(@PathVariable Long id) {
+        return productService.existsProduct(id);
+    }
+
 }

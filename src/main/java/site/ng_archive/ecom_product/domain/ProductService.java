@@ -66,4 +66,10 @@ public class ProductService {
             .then();
     }
 
+    public Mono<ProductExistsResponse> existsProduct(Long id) {
+        return productRepository.findById(id)
+            .switchIfEmpty(Mono.error(() -> new EntityNotFoundException("product.notfound")))
+            .map(ProductExistsResponse::of);
+    }
+
 }
