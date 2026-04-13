@@ -503,6 +503,67 @@ class ProductControllerTest extends AcceptedTest {
         Assertions.assertThat(response.message()).isEqualTo("해당 상품에 대한 접근 권한이 없습니다.");
     }
 
+    @Test
+    void 상품존재여부조회_성공() {
+        Product createProduct = createProduct(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE, ProductStatus.PENDING, TEST_MEMBER_ID);
+
+        ProductExistsResponse response = given()
+            .pathParam("id", createProduct.id())
+            .consumeWith(document(
+                info()
+                    .tag("Product")
+                    .summary("상품 존재 여부 조회")
+                    .description("상품 ID를 사용하여 상품 존재 여부를 조회합니다.")
+                    .pathParameters(
+                        parameterWithName("id").description("상품 ID").type(SimpleType.INTEGER)
+                    )
+                    .responseFields(
+                        field(ProductExistsResponse.class, "id", "상품 ID"),
+                        field(ProductExistsResponse.class, "name", "상품 이름"),
+                        field(ProductExistsResponse.class, "memberId", "회원 ID")
+                    )
+                    .responseSchema(Schema.schema("ProductExistsResponse"))
+            ))
+            .get("/product/{id}/exists")
+            .then()
+            .status(HttpStatus.OK)
+            .contentType(ContentType.JSON)
+            .log().all()
+            .extract().body().as(ProductExistsResponse.class);
+
+        Assertions.assertThat(createProduct.id()).isEqualTo(response.id());
+        Assertions.assertThat(createProduct.name()).isEqualTo(response.name());
+    }
+
+    @Test
+    void 상품존재여부조회_실패_미존재상품() {
+        ErrorResponse response = given()
+            .pathParam("id", -1L)
+            .consumeWith(document(
+                info()
+                    .tag("Product")
+                    .summary("상품 존재 여부 조회")
+                    .description("상품 ID를 사용하여 상품 존재 여부를 조회합니다.")
+                    .pathParameters(
+                        parameterWithName("id").description("상품 ID").type(SimpleType.INTEGER)
+                    )
+                    .responseFields(
+                        field(ErrorResponse.class, "errorCode", "오류 코드"),
+                        field(ErrorResponse.class, "message", "오류 메시지")
+                    )
+                    .responseSchema(Schema.schema("ErrorResponse"))
+            ))
+            .get("/product/{id}/exists")
+            .then()
+            .status(HttpStatus.NOT_FOUND)
+            .contentType(ContentType.JSON)
+            .log().all()
+            .extract().body().as(ErrorResponse.class);
+
+        Assertions.assertThat(response.errorCode()).isEqualTo("product.notfound");
+        Assertions.assertThat(response.message()).isEqualTo("상품 데이터가 존재하지 않습니다.");
+    }
+
     private String createTestJwtToken(Long memberId, String role) {
         return TokenUtil.getSign(UserContext.of(memberId, role));
     }
