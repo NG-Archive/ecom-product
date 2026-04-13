@@ -61,11 +61,11 @@ class ProductControllerTest extends AcceptedTest {
                             parameterWithName("size").description("페이지 크기").type(SimpleType.INTEGER).defaultValue(10)
                         )
                     .responseFields(
-                        field(ProductResponse.class, "[].id", "상품 ID"),
-                        field(ProductResponse.class, "[].name", "상품 이름"),
-                        field(ProductResponse.class, "[].price", "상품 가격")
+                        field(ProductListResponse.class, "[].id", "상품 ID"),
+                        field(ProductListResponse.class, "[].name", "상품 이름"),
+                        field(ProductListResponse.class, "[].price", "상품 가격")
                     )
-                    .responseSchema(Schema.schema("ProductList"))
+                    .responseSchema(Schema.schema("ProductListResponse"))
             ))
             .get("/products")
             .then()
@@ -98,7 +98,8 @@ class ProductControllerTest extends AcceptedTest {
                         field(ProductResponse.class, "id", "상품 ID"),
                         field(ProductResponse.class, "name", "상품 이름"),
                         field(ProductResponse.class, "price", "상품 가격"),
-                        field(ProductResponse.class, "quantity", "상품 재고")
+                        field(ProductResponse.class, "quantity", "상품 재고"),
+                        field(ProductResponse.class, "memberId", "회원 ID")
                     )
                     .responseSchema(Schema.schema("ProductDetail"))
             ))
@@ -200,7 +201,8 @@ class ProductControllerTest extends AcceptedTest {
                         field(ProductResponse.class, "id", "상품 ID"),
                         field(ProductResponse.class, "name", "상품 이름"),
                         field(ProductResponse.class, "price", "상품 가격"),
-                        field(ProductResponse.class, "quantity", "상품 재고")
+                        field(ProductResponse.class, "quantity", "상품 재고"),
+                        field(ProductResponse.class, "memberId", "회원 ID")
                     )
                     .responseSchema(Schema.schema("ProductCreatedResponse"))
             ))
