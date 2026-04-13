@@ -10,11 +10,15 @@ public record CreateProductRequest(
 
     @NotNull(message = "product.price.null")
     @Min(value = 0, message = "product.price.min")
-    Long price
+    Long price,
+
+    @NotNull(message = "product.quantity.null")
+    @Min(value = 0, message = "product.quantity.min")
+    Long quantity
 ) {
 
-    public CreateProductCommand toCommand() {
-        return new CreateProductCommand(name, price);
+    public CreateProductCommand toCommand(Long memberId) {
+        return new CreateProductCommand(name, price, quantity, memberId);
     }
 
 }

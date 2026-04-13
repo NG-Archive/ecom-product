@@ -1,12 +1,9 @@
 package site.ng_archive.ecom_product.domain.dto;
 
-import site.ng_archive.ecom_product.domain.Product;
-
 public record CreateProductCommand(
     String name,
-    Long price
+    Long price,
+    Long quantity,
+    Long memberId
 ) {
-    public Product toEntity() {
-        return new Product(null, name, price);
-    }
 }

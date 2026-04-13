@@ -5,11 +5,10 @@ import site.ng_archive.ecom_product.domain.Product;
 public record ProductResponse(
     Long id,
     String name,
-    Long price
+    Long price,
+    Long quantity
 ) {
-
-    public static ProductResponse from(Product product) {
-        return new ProductResponse(product.id(), product.name(), product.price());
+    public static ProductResponse of(Product product, Long quantity) {
+        return new ProductResponse(product.id(), product.name(), product.price(), quantity);
     }
-
 }

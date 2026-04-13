@@ -10,7 +10,10 @@ public interface ProductRepository extends ReactiveCrudRepository<Product, Long>
             SELECT p.*
             FROM product p 
             JOIN (
-                SELECT id FROM product ORDER BY id DESC LIMIT :size OFFSET :offset) temp
+                SELECT id 
+                FROM product
+                WHERE status = 'ACTIVE'
+                ORDER BY id DESC LIMIT :size OFFSET :offset) temp
             ON p.id = temp.id
             ORDER BY p.id DESC
             """)
