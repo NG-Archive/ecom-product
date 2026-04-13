@@ -8,11 +8,19 @@ public record Product(
         @Id
         Long id,
         String name,
-        Long price
+        Long price,
+        ProductStatus status,
+        Long memberId
 ) {
-
-    public Product update(String name, Long price) {
-        return new Product(this.id, name, price);
+    public static Product createInitial(String name, Long price, Long memberId) {
+        return new Product(null, name, price, ProductStatus.PENDING, memberId);
     }
 
+    public Product update(String name, Long price, ProductStatus status, Long memberId) {
+        return new Product(this.id, name, price, status, memberId);
+    }
+
+    public Product withStatus(ProductStatus newStatus) {
+        return new Product(id, name, price, newStatus, memberId);
+    }
 }

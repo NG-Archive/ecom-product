@@ -8,9 +8,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import site.ng_archive.ecom_product.domain.dto.CreateProductRequest;
-import site.ng_archive.ecom_product.domain.dto.ProductResponse;
-import site.ng_archive.ecom_product.domain.dto.UpdateProductRequest;
+import site.ng_archive.ecom_common.auth.Role;
+import site.ng_archive.ecom_common.auth.UserContext;
+import site.ng_archive.ecom_common.auth.aspect.LoginUser;
+import site.ng_archive.ecom_common.auth.aspect.RequireRoles;
+import site.ng_archive.ecom_product.domain.dto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("/products")
-    public Flux<ProductResponse> readAllProducts(
+    public Flux<ProductListResponse> readAllProducts(
             @RequestParam(defaultValue = "0") @Min(0) long offset,
             @RequestParam(defaultValue = "10") @Min(1) int size) {
         return productService.readAllProducts(offset, size);
@@ -31,17 +33,22 @@ public class ProductController {
         return productService.readProduct(id);
     }
 
+    @RequireRoles(roles = {Role.ROLES.SELLER})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/product")
-    public Mono<ProductResponse> createProduct(@Valid @RequestBody CreateProductRequest request) {
-        return productService.createProduct(request.toCommand());
+    public Mono<ProductResponse> createProduct(
+        @LoginUser UserContext user,
+        @Valid @RequestBody CreateProductRequest request) {
+        return productService.createProduct(request.toCommand(user.id()));
     }
 
+    @RequireRoles(roles = {Role.ROLES.SELLER})
     @PutMapping("/product/{id}")
-    public Mono<ProductResponse> updateProduct(
+    public Mono<UpdateProductResponse> updateProduct(
+        @LoginUser UserContext user,
         @PathVariable Long id,
         @Valid @RequestBody UpdateProductRequest request) {
-        return productService.updateProduct(request.toCommand(id));
+        return productService.updateProduct(request.toCommand(id, user.id()));
     }
 
 }
