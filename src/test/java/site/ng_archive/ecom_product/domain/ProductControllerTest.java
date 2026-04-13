@@ -533,6 +533,7 @@ class ProductControllerTest extends AcceptedTest {
 
         Assertions.assertThat(createProduct.id()).isEqualTo(response.id());
         Assertions.assertThat(createProduct.name()).isEqualTo(response.name());
+        Assertions.assertThat(createProduct.memberId()).isEqualTo(response.memberId());
     }
 
     @Test
