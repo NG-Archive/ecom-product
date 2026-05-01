@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_common.auth.exception.ForbiddenException;
 import site.ng_archive.ecom_common.handler.EntityNotFoundException;
 import site.ng_archive.ecom_product.domain.dto.*;
+import site.ng_archive.ecom_product.domain.publisher.ProductEventPublisher;
 import site.ng_archive.ecom_product.domain.requester.StockRequester;
 
 @Service
@@ -16,6 +17,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final StockRequester stockRequester;
+    private final ProductEventPublisher productEventPublisher;
 
     private final TransactionalOperator transactionalOperator;
 
@@ -56,7 +58,13 @@ public class ProductService {
             .switchIfEmpty(Mono.error(() -> new ForbiddenException("product.forbidden")))
             .flatMap(product -> {
                 Product updatedProduct = product.update(command.name(), command.price(), command.status(), command.memberId());
-                return productRepository.save(updatedProduct);
+                return productRepository.save(updatedProduct)
+                    .delayUntil(savedProduct -> {
+                        if (savedProduct.price().equals(product.price())) {
+                            return Mono.empty();
+                        }
+                        return productEventPublisher.publishChangeEvent(savedProduct);
+                    });
             })
             .map(UpdateProductResponse::from);
     }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_common.auth.Role;
@@ -23,6 +24,8 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithNam
 import static io.restassured.module.webtestclient.RestAssuredWebTestClient.given;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 
 class ProductControllerTest extends AcceptedTest {
 
@@ -31,6 +34,9 @@ class ProductControllerTest extends AcceptedTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @MockitoBean
+    private ReactiveKafkaProducerTemplate<String, Object> producerTemplate;
 
     private static final Long TEST_PRODUCT_ID = 1L;
     private static final String TEST_PRODUCT_NAME = "테스트 상품";
@@ -337,7 +343,9 @@ class ProductControllerTest extends AcceptedTest {
     void 상품수정_성공() {
         String token = createTestJwtToken(TEST_MEMBER_ID, Role.ROLES.SELLER);
         Product createdProduct = createProduct(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE, ProductStatus.ACTIVE, TEST_MEMBER_ID);
-        UpdateProductRequest request = new UpdateProductRequest("테스트 상품 수정", 2000L, ProductStatus.INACTIVE);
+        UpdateProductRequest request = new UpdateProductRequest("테스트 상품 수정", 20000L, ProductStatus.INACTIVE);
+
+        mockProducerTemplateSend();
 
         UpdateProductResponse response = given()
             .contentType(ContentType.JSON)
@@ -378,6 +386,9 @@ class ProductControllerTest extends AcceptedTest {
         Assertions.assertThat(response.name()).isEqualTo(request.name());
         Assertions.assertThat(response.price()).isEqualTo(request.price());
         Assertions.assertThat(response.status()).isEqualTo(request.status().name());
+
+        BDDMockito.then(producerTemplate).should(times(1))
+            .send(anyString(), anyString(), any());
     }
 
     @Test
@@ -597,6 +608,11 @@ class ProductControllerTest extends AcceptedTest {
     private void mockCreateStockError() {
         BDDMockito.given(stockRequester.createStock(any(), any()))
             .willReturn(Mono.error(new RuntimeException("재고 등록 오류")));
+    }
+
+    private void mockProducerTemplateSend() {
+        BDDMockito.given(producerTemplate.send(anyString(), anyString(), any()))
+            .willReturn(Mono.empty());
     }
 
 }
